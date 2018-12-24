@@ -1,26 +1,52 @@
 {
-  "name": "react-native-google-speech-api",
-  "version": "1.0.0",
-  "description": "## Getting started",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
+  "_args": [
+    [
+      "git+https://github.com/hayanmind/react-native-google-speech-api.git",
+      "/Users/vladyslav/Documents/Work/PerceptionBox/get-alert"
+    ]
+  ],
+  "_from": "git+https://github.com/hayanmind/react-native-google-speech-api.git",
+  "_id": "react-native-google-speech-api@git+https://github.com/hayanmind/react-native-google-speech-api.git#a2ac228c535ab38a52785832d16a65f2e03a3ce5",
+  "_inBundle": false,
+  "_integrity": "",
+  "_location": "/react-native-google-speech-api",
+  "_phantomChildren": {},
+  "_requested": {
     "type": "git",
-    "url": "git+https://github.com/hayanmind/react-native-google-speech-api.git"
+    "raw": "git+https://github.com/hayanmind/react-native-google-speech-api.git",
+    "rawSpec": "git+https://github.com/hayanmind/react-native-google-speech-api.git",
+    "saveSpec": "git+https://github.com/hayanmind/react-native-google-speech-api.git",
+    "fetchSpec": "https://github.com/hayanmind/react-native-google-speech-api.git",
+    "gitCommittish": null
   },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "git+https://github.com/hayanmind/react-native-google-speech-api.git#a2ac228c535ab38a52785832d16a65f2e03a3ce5",
+  "_spec": "git+https://github.com/hayanmind/react-native-google-speech-api.git",
+  "_where": "/Users/vladyslav/Documents/Work/PerceptionBox/get-alert",
   "author": "",
-  "license": "ISC",
   "bugs": {
     "url": "https://github.com/hayanmind/react-native-google-speech-api/issues"
   },
-  "homepage": "https://github.com/hayanmind/react-native-google-speech-api#readme",
+  "description": "## Getting started",
   "files": [
     "android/*",
     "ios/*",
     "index.js",
     "package.json",
     "README.md"
-  ]
+  ],
+  "homepage": "https://github.com/hayanmind/react-native-google-speech-api#readme",
+  "license": "ISC",
+  "main": "index.js",
+  "name": "react-native-google-speech-api",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hayanmind/react-native-google-speech-api.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "1.0.0"
 }

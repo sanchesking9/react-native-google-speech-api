@@ -4,8 +4,5 @@
 
 @interface RNGoogleSpeechApi : RCTEventEmitter <RCTBridgeModule>
 
-- (void)recordAudio;
-- (void)stopAudio;
-
 @end
   
