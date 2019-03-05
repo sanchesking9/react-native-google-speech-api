@@ -1,6 +1,7 @@
 'use strict';
 import React, {
-  NativeModules
+  NativeModules,
+  Platform
 } from 'react-native';
 
 const { RNGoogleSpeechApi } = NativeModules;
@@ -12,21 +13,29 @@ class RCTGoogleSpeechApi {
   }
 
   start() {
-    return new Promise((resolve, reject) => {
-      RNGoogleSpeechApi.startSpeech();
-    });
+    RNGoogleSpeechApi.startSpeech();
   }
 
   stop() {
-    return new Promise((resolve, reject) => {
-      RNGoogleSpeechApi.cancelSpeech((error, data) => {
-        if (error) {
-          reject(new Error(error));
-        } else {
-          resolve(data);
-        }
+    if(Platform.OS === 'ios') {
+      return new Promise((resolve, reject) => {
+        RNGoogleSpeechApi.cancelSpeech((error, data) => {
+          if (error) {
+            reject(new Error(error));
+          } else {
+            resolve(data);
+          }
+        });
       });
-    });
+    } else {
+      return new Promise((resolve, reject) => {
+        RNGoogleSpeechApi.cancelSpeech(data => {
+          resolve(data);
+        }, error => {
+          reject(new Error(error));
+        });
+      });
+    }
   }
 
 }

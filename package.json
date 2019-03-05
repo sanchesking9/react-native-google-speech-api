@@ -5,30 +5,34 @@
       "/Users/vladyslav/Documents/Work/PerceptionBox/get-alert"
     ]
   ],
-  "_from": "git+https://github.com/hayanmind/react-native-google-speech-api.git",
-  "_id": "react-native-google-speech-api@git+https://github.com/hayanmind/react-native-google-speech-api.git#a2ac228c535ab38a52785832d16a65f2e03a3ce5",
+  "_from": "git+https://github.com/frantsyan/react-native-google-speech-api.git",
+  "_id": "react-native-google-speech-api@1.0.0",
   "_inBundle": false,
   "_integrity": "",
   "_location": "/react-native-google-speech-api",
   "_phantomChildren": {},
   "_requested": {
     "type": "git",
-    "raw": "git+https://github.com/hayanmind/react-native-google-speech-api.git",
-    "rawSpec": "git+https://github.com/hayanmind/react-native-google-speech-api.git",
-    "saveSpec": "git+https://github.com/hayanmind/react-native-google-speech-api.git",
-    "fetchSpec": "https://github.com/hayanmind/react-native-google-speech-api.git",
+    "raw": "react-native-google-speech-api@git+https://github.com/frantsyan/react-native-google-speech-api.git",
+    "name": "react-native-google-speech-api",
+    "escapedName": "react-native-google-speech-api",
+    "rawSpec": "git+https://github.com/frantsyan/react-native-google-speech-api.git",
+    "saveSpec": "git+https://github.com/frantsyan/react-native-google-speech-api.git",
+    "fetchSpec": "https://github.com/frantsyan/react-native-google-speech-api.git",
     "gitCommittish": null
   },
   "_requiredBy": [
     "/"
   ],
-  "_resolved": "git+https://github.com/hayanmind/react-native-google-speech-api.git#a2ac228c535ab38a52785832d16a65f2e03a3ce5",
-  "_spec": "git+https://github.com/hayanmind/react-native-google-speech-api.git",
+  "_resolved": "git+https://github.com/frantsyan/react-native-google-speech-api.git#f8bac21611dd1dac8500c4739c562c7ae43990a4",
+  "_spec": "react-native-google-speech-api@git+https://github.com/frantsyan/react-native-google-speech-api.git",
   "_where": "/Users/vladyslav/Documents/Work/PerceptionBox/get-alert",
   "author": "",
   "bugs": {
     "url": "https://github.com/hayanmind/react-native-google-speech-api/issues"
   },
+  "bundleDependencies": false,
+  "deprecated": false,
   "description": "## Getting started",
   "files": [
     "android/*",

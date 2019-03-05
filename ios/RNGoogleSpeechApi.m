@@ -61,11 +61,11 @@ RCT_EXPORT_METHOD(startSpeech) {
 
 RCT_EXPORT_METHOD(cancelSpeech:(RCTResponseSenderBlock)callback) {
     [self stopAudio];
-    
+
     NSString *service = @"https://speech.googleapis.com/v1/speech:recognize";
     service = [service stringByAppendingString:@"?key="];
     service = [service stringByAppendingString:_apiKey];
-    
+
     NSData *audioData = [NSData dataWithContentsOfFile:[self soundFilePath]];
     NSDictionary *configRequest = @{@"encoding":@"LINEAR16",
                                     @"sampleRateHertz":@(SAMPLE_RATE),
@@ -78,7 +78,7 @@ RCT_EXPORT_METHOD(cancelSpeech:(RCTResponseSenderBlock)callback) {
     NSData *requestData = [NSJSONSerialization dataWithJSONObject:requestDictionary
                                                           options:0
                                                             error:&error];
-    
+
     NSString *path = service;
     NSURL *URL = [NSURL URLWithString:path];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
@@ -88,7 +88,7 @@ RCT_EXPORT_METHOD(cancelSpeech:(RCTResponseSenderBlock)callback) {
     [request addValue:contentType forHTTPHeaderField:@"Content-Type"];
     [request setHTTPBody:requestData];
     [request setHTTPMethod:@"POST"];
-    
+
     NSURLSessionTask *task =
     [[NSURLSession sharedSession]
      dataTaskWithRequest:request
@@ -102,7 +102,7 @@ RCT_EXPORT_METHOD(cancelSpeech:(RCTResponseSenderBlock)callback) {
                         });
      }];
     [task resume];
-    
+
     [_audioSession setCategory:AVAudioSessionCategoryPlayback error:nil];
 }
 
