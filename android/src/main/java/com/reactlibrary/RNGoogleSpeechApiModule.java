@@ -15,6 +15,7 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.google.api.client.extensions.android.http.AndroidHttp;
@@ -88,8 +89,18 @@ public class RNGoogleSpeechApiModule extends ReactContextBaseJavaModule {
           }
 
           try {
+            int bufferSize = 0;
+            double average = 0.0;
+            for (short s : audioData) {
+              if(s>0) {
+                average += Math.abs(s);
+              } else {
+                bufferSize--;
+              }
+            }
+            int x = (int) Math.abs((average/bufferSize) / 2);
             WritableMap params = Arguments.createMap();
-            params.putInt("noiseLevel", (int) audioData[0]);
+            params.putInt("noiseLevel", x);
             sendEvent(reactContext, "onSpeechToTextCustom", params);
             os.write(audioData, 0, status);
           } catch (IOException e) {
