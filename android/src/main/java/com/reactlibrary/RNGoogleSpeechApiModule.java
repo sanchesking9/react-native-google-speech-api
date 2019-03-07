@@ -81,6 +81,8 @@ public class RNGoogleSpeechApiModule extends ReactContextBaseJavaModule {
 
         while (!mStop) {
           int status = recorder.read(audioData, 0, audioData.length);
+          int bufferSize = 0;
+          double average = 0.0;
 
           if (status == AudioRecord.ERROR_INVALID_OPERATION ||
                   status == AudioRecord.ERROR_BAD_VALUE) {
@@ -89,24 +91,23 @@ public class RNGoogleSpeechApiModule extends ReactContextBaseJavaModule {
           }
 
           try {
-            int bufferSize = 0;
-            double average = 0.0;
-            for (short s : audioData) {
-              if(s>0) {
-                average += Math.abs(s);
-              } else {
-                bufferSize--;
-              }
-            }
-            int x = (int) Math.abs((average/bufferSize) / 2);
-            WritableMap params = Arguments.createMap();
-            params.putInt("noiseLevel", x);
-            sendEvent(reactContext, "onSpeechToTextCustom", params);
             os.write(audioData, 0, status);
           } catch (IOException e) {
             Log.e("evert", "Error saving recording ", e);
             return;
           }
+
+          for (short s : audioData) {
+            if(s>0) {
+              average += Math.abs(s);
+            } else {
+              bufferSize--;
+            }
+          }
+          int x = (int) Math.abs((average/bufferSize) / 2);
+          WritableMap params = Arguments.createMap();
+          params.putInt("noiseLevel", x);
+          sendEvent(reactContext, "onSpeechToTextCustom", params);
         }
 
         try {
