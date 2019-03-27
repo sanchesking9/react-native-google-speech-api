@@ -24,7 +24,7 @@
   "_requiredBy": [
     "/"
   ],
-  "_resolved": "git+https://github.com/frantsyan/react-native-google-speech-api.git#f8bac21611dd1dac8500c4739c562c7ae43990a4",
+  "_resolved": "git+https://github.com/frantsyan/react-native-google-speech-api.git#a47fbb0a84872a1a0274cb84cb47943c08213ae4",
   "_spec": "react-native-google-speech-api@git+https://github.com/frantsyan/react-native-google-speech-api.git",
   "_where": "/Users/vladyslav/Documents/Work/PerceptionBox/get-alert",
   "author": "",

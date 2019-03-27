@@ -9,6 +9,13 @@ import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import org.json.JSONObject;
+
+import java.io.DataOutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.io.InputStream;
+
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -139,39 +146,74 @@ public class RNGoogleSpeechApiModule extends ReactContextBaseJavaModule {
         String base64EncodedData =
                 Base64.encodeBase64String(audioData);
 
-        Speech speechService = new Speech.Builder(
-                AndroidHttp.newCompatibleTransport(),
-                new AndroidJsonFactory(),
-                null
-        ).setSpeechRequestInitializer(
-                new SpeechRequestInitializer(apiKey))
-                .build();
-        RecognitionConfig recognitionConfig = new RecognitionConfig();
-        recognitionConfig.setLanguageCode("en-GB");
-        recognitionConfig.setSampleRate(8000);
-        recognitionConfig.setEncoding("LINEAR16");
-        recognitionConfig.setMaxAlternatives(1);
-        RecognitionAudio recognitionAudio = new RecognitionAudio();
-        recognitionAudio.setContent(base64EncodedData);
-
-        SyncRecognizeRequest request = new SyncRecognizeRequest();
-        request.setConfig(recognitionConfig);
-        request.setAudio(recognitionAudio);
-
-        SyncRecognizeResponse response = speechService.speech()
-                .syncrecognize(request)
-                .execute();
-        if(String.valueOf(response).equals("{}")) {
-          error.invoke("Error");
-        } else {
-          result.invoke(String.valueOf(response));
-        }
+        sendPost(result, error, base64EncodedData);
       } catch (FileNotFoundException e) {
         error.invoke(String.valueOf(e));
       } catch (IOException e) {
         error.invoke(String.valueOf(e));
       }
     }
+  }
+
+  private void sendPost(final Callback result, final Callback error, final String base64EncodedData) {
+       Thread thread = new Thread(new Runnable() {
+           @Override
+           public void run() {
+               try {
+                   URL url = new URL("https://speech.googleapis.com/v1/speech:recognize?key=" + apiKey);
+                   HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                   conn.setRequestMethod("POST");
+                   conn.setRequestProperty("Content-Type", "application/json");
+                   conn.setDoOutput(true);
+                   conn.setDoInput(true);
+
+
+                   JSONObject jsonConfig = new JSONObject();
+                   jsonConfig.put("encoding", "LINEAR16");
+                   jsonConfig.put("sampleRateHertz", 8000);
+                   jsonConfig.put("languageCode", "en-GB");
+                   jsonConfig.put("maxAlternatives", 1);
+
+                   JSONObject jsonAudio = new JSONObject();
+                   jsonAudio.put("content", base64EncodedData);
+
+                   JSONObject json = new JSONObject();
+                   json.put("config", jsonConfig);
+                   json.put("audio", jsonAudio);
+
+                   DataOutputStream os = new DataOutputStream(conn.getOutputStream());
+                   os.writeBytes(json.toString());
+                   os.flush();
+                   os.close();
+
+
+                   String reply;
+                   InputStream in = conn.getInputStream();
+                   StringBuffer sb = new StringBuffer();
+                   try {
+                       int chr;
+                       while ((chr = in.read()) != -1) {
+                           sb.append((char) chr);
+                       }
+                       reply = sb.toString();
+                   } finally {
+                       in.close();
+                   }
+
+                   if(reply.equals("{}")) {
+                       error.invoke("Error");
+                   } else {
+                       result.invoke(reply);
+                   }
+
+                   conn.disconnect();
+               } catch (Exception e) {
+                   error.invoke(String.valueOf(e));
+               }
+           }
+       });
+
+       thread.start();
   }
 
   @Override
