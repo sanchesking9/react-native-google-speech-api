@@ -48,7 +48,7 @@ public class RNGoogleSpeechApiModule extends ReactContextBaseJavaModule {
 
   private final ReactApplicationContext reactContext;
   private String apiKey;
-  private static final int SAMPLING_RATE = 8000;
+  private static final int SAMPLING_RATE = 16000;
   private static final int AUDIO_SOURCE = MediaRecorder.AudioSource.MIC;
   private static final int CHANNEL_IN_CONFIG = AudioFormat.CHANNEL_IN_MONO;
   private static final int AUDIO_FORMAT = AudioFormat.ENCODING_PCM_16BIT;
@@ -88,44 +88,37 @@ public class RNGoogleSpeechApiModule extends ReactContextBaseJavaModule {
 
         while (!mStop) {
           int status = recorder.read(audioData, 0, audioData.length);
-          int bufferSize = 0;
-          double average = 0.0;
+          double sumLevel = 0;
+
+          for(int i = 0; i < status; i++) {
+            sumLevel += audioData[i];
+          }
+
+          int level = (int) Math.abs((sumLevel / status));
+
+          if(level >= 2) {
+            WritableMap params = Arguments.createMap();
+            params.putInt("noiseLevel", level + 6);
+            sendEvent(reactContext, "onSpeechToTextCustom", params);
+          }
 
           if (status == AudioRecord.ERROR_INVALID_OPERATION ||
                   status == AudioRecord.ERROR_BAD_VALUE) {
-            Log.e("evert", "Error reading audio data!");
             return;
           }
 
           try {
             os.write(audioData, 0, status);
           } catch (IOException e) {
-            Log.e("evert", "Error saving recording ", e);
             return;
           }
-
-          for (short s : audioData) {
-            if(s>0) {
-              average += Math.abs(s);
-            } else {
-              bufferSize--;
-            }
-          }
-          int x = (int) Math.abs((average/bufferSize) / 2);
-          WritableMap params = Arguments.createMap();
-          params.putInt("noiseLevel", x);
-          sendEvent(reactContext, "onSpeechToTextCustom", params);
         }
 
         try {
           os.close();
-
           recorder.stop();
           recorder.release();
-
-          Log.v("evert", "Recording done…");
           mStop = false;
-
         } catch (IOException e) {
           Log.e("evert", "Error when releasing", e);
         }
@@ -170,7 +163,7 @@ public class RNGoogleSpeechApiModule extends ReactContextBaseJavaModule {
 
                    JSONObject jsonConfig = new JSONObject();
                    jsonConfig.put("encoding", "LINEAR16");
-                   jsonConfig.put("sampleRateHertz", 8000);
+                   jsonConfig.put("sampleRateHertz", 16000);
                    jsonConfig.put("languageCode", "en-GB");
                    jsonConfig.put("maxAlternatives", 1);
 
