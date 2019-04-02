@@ -8,6 +8,9 @@ import android.net.Uri;
 import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 
 import org.json.JSONObject;
 
@@ -48,12 +51,9 @@ public class RNGoogleSpeechApiModule extends ReactContextBaseJavaModule {
 
   private final ReactApplicationContext reactContext;
   private String apiKey;
-  private static final int SAMPLING_RATE = 16000;
-  private static final int AUDIO_SOURCE = MediaRecorder.AudioSource.MIC;
-  private static final int CHANNEL_IN_CONFIG = AudioFormat.CHANNEL_IN_MONO;
-  private static final int AUDIO_FORMAT = AudioFormat.ENCODING_PCM_16BIT;
-  private static final int BUFFER_SIZE = AudioRecord.getMinBufferSize(SAMPLING_RATE, CHANNEL_IN_CONFIG, AUDIO_FORMAT);
-  private static final String AUDIO_RECORDING_FILE_NAME = Environment.getExternalStorageDirectory() + "/recording.raw";
+  private MediaRecorder mediaRecorder;
+  private String fileName = Environment.getExternalStorageDirectory() + "/record.3gp";
+  private Handler handler = new Handler(Looper.getMainLooper());
   private boolean mStop = false;
 
   public RNGoogleSpeechApiModule(ReactApplicationContext reactContext) {
@@ -68,71 +68,29 @@ public class RNGoogleSpeechApiModule extends ReactContextBaseJavaModule {
 
   @ReactMethod
   public void startSpeech() {
-    new Thread(new Runnable() {
-      @Override
-      public void run() {
-        android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_URGENT_AUDIO);
-
-        byte audioData[] = new byte[BUFFER_SIZE];
-        AudioRecord recorder = new AudioRecord(AUDIO_SOURCE,
-                SAMPLING_RATE, CHANNEL_IN_CONFIG,
-                AUDIO_FORMAT, BUFFER_SIZE);
-        recorder.startRecording();
-
-        BufferedOutputStream os = null;
-        try {
-          os = new BufferedOutputStream(new FileOutputStream(AUDIO_RECORDING_FILE_NAME));
-        } catch (FileNotFoundException e) {
-          Log.e("evert", "File not found for recording ", e);
-        }
-
-        while (!mStop) {
-          int status = recorder.read(audioData, 0, audioData.length);
-          double sumLevel = 0;
-
-          for(int i = 0; i < status; i++) {
-            sumLevel += audioData[i];
-          }
-
-          int level = (int) Math.abs((sumLevel / status));
-
-          if(level >= 2) {
-            WritableMap params = Arguments.createMap();
-            params.putInt("noiseLevel", level + 6);
-            sendEvent(reactContext, "onSpeechToTextCustom", params);
-          }
-
-          if (status == AudioRecord.ERROR_INVALID_OPERATION ||
-                  status == AudioRecord.ERROR_BAD_VALUE) {
-            return;
-          }
-
-          try {
-            os.write(audioData, 0, status);
-          } catch (IOException e) {
-            return;
-          }
-        }
-
-        try {
-          os.close();
-          recorder.stop();
-          recorder.release();
-          mStop = false;
-        } catch (IOException e) {
-          Log.e("evert", "Error when releasing", e);
-        }
-      }
-    }).start();
+    try {
+        mediaRecorder = new MediaRecorder();
+        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+        mediaRecorder.setOutputFile(fileName);
+        mediaRecorder.prepare();
+        mediaRecorder.start();
+        mStop = false;
+        handler.postDelayed(pollTask, 10);
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
   }
 
   @ReactMethod
   private void cancelSpeech(Callback result, Callback error) {
     if (!mStop) {
       mStop = true;
+      mediaRecorder.stop();
       try {
         InputStream stream = reactContext.getContentResolver()
-                .openInputStream(Uri.fromFile(new File(AUDIO_RECORDING_FILE_NAME)));
+                .openInputStream(Uri.fromFile(new File(fileName)));
         byte[] audioData = IOUtils.toByteArray(stream);
         stream.close();
 
@@ -146,6 +104,25 @@ public class RNGoogleSpeechApiModule extends ReactContextBaseJavaModule {
         error.invoke(String.valueOf(e));
       }
     }
+  }
+
+  private Runnable pollTask = new Runnable() {
+      @Override
+      public void run() {
+          WritableMap params = Arguments.createMap();
+      	  params.putInt("noiseLevel", getAmplitude() + 4);
+      	  sendEvent(reactContext, "onSpeechToTextCustom", params);
+          if(!mStop) {
+            handler.postDelayed(pollTask, 100);
+          }
+      }
+  };
+
+  private int getAmplitude() {
+      if (mediaRecorder != null)
+          return mediaRecorder.getMaxAmplitude() / 1300;
+      else
+          return 0;
   }
 
   private void sendPost(final Callback result, final Callback error, final String base64EncodedData) {
@@ -162,8 +139,8 @@ public class RNGoogleSpeechApiModule extends ReactContextBaseJavaModule {
 
 
                    JSONObject jsonConfig = new JSONObject();
-                   jsonConfig.put("encoding", "LINEAR16");
-                   jsonConfig.put("sampleRateHertz", 16000);
+                   jsonConfig.put("encoding", "AMR");
+                   jsonConfig.put("sampleRateHertz", 8000);
                    jsonConfig.put("languageCode", "en-GB");
                    jsonConfig.put("maxAlternatives", 1);
 
