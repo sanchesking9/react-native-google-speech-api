@@ -141,7 +141,7 @@ public class RNGoogleSpeechApiModule extends ReactContextBaseJavaModule {
                    JSONObject jsonConfig = new JSONObject();
                    jsonConfig.put("encoding", "AMR");
                    jsonConfig.put("sampleRateHertz", 8000);
-                   jsonConfig.put("languageCode", "en-GB");
+                   jsonConfig.put("languageCode", "en-US");
                    jsonConfig.put("maxAlternatives", 1);
 
                    JSONObject jsonAudio = new JSONObject();

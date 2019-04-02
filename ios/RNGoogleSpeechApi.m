@@ -69,7 +69,7 @@ RCT_EXPORT_METHOD(cancelSpeech:(RCTResponseSenderBlock)callback) {
     NSData *audioData = [NSData dataWithContentsOfFile:[self soundFilePath]];
     NSDictionary *configRequest = @{@"encoding":@"LINEAR16",
                                     @"sampleRateHertz":@(SAMPLE_RATE),
-                                    @"languageCode":@"en-GB",
+                                    @"languageCode":@"en-US",
                                     @"maxAlternatives":@1};
     NSDictionary *audioRequest = @{@"content":[audioData base64EncodedStringWithOptions:0]};
     NSDictionary *requestDictionary = @{@"config":configRequest,
