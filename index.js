@@ -38,6 +38,10 @@ class RCTGoogleSpeechApi {
     }
   }
 
+  urgentStop() {
+    RNGoogleSpeechApi.urgentCancelSpeech();
+  }
+
 }
 
 module.exports = new RCTGoogleSpeechApi();

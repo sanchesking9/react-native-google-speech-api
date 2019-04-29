@@ -13,20 +13,12 @@
  #import "GPBProtocolBuffers_RuntimeSupport.h"
 #endif
 
-#if GPB_USE_PROTOBUF_FRAMEWORK_IMPORTS
- #import <Protobuf/Any.pbobjc.h>
- #import <Protobuf/Duration.pbobjc.h>
- #import <Protobuf/Timestamp.pbobjc.h>
-#else
- #import "google/protobuf/Any.pbobjc.h"
- #import "google/protobuf/Duration.pbobjc.h"
- #import "google/protobuf/Timestamp.pbobjc.h"
-#endif
+#import <stdatomic.h>
 
- #import "google/cloud/speech/v1/CloudSpeech.pbobjc.h"
- #import "google/api/Annotations.pbobjc.h"
- #import "google/longrunning/Operations.pbobjc.h"
- #import "google/rpc/Status.pbobjc.h"
+#import "google/cloud/speech/v1/CloudSpeech.pbobjc.h"
+#import "google/api/Annotations.pbobjc.h"
+#import "google/longrunning/Operations.pbobjc.h"
+#import "google/rpc/Status.pbobjc.h"
 // @@protoc_insertion_point(imports)
 
 #pragma clang diagnostic push
@@ -42,14 +34,10 @@
   // about thread safety and initialization of registry.
   static GPBExtensionRegistry* registry = nil;
   if (!registry) {
-    GPBDebugCheckRuntimeVersion();
+    GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
     registry = [[GPBExtensionRegistry alloc] init];
+    // Merge in the imports (direct or indirect) that defined extensions.
     [registry addExtensions:[AnnotationsRoot extensionRegistry]];
-    [registry addExtensions:[OperationsRoot extensionRegistry]];
-    [registry addExtensions:[GPBAnyRoot extensionRegistry]];
-    [registry addExtensions:[GPBDurationRoot extensionRegistry]];
-    [registry addExtensions:[GPBTimestampRoot extensionRegistry]];
-    [registry addExtensions:[StatusRoot extensionRegistry]];
   }
   return registry;
 }
@@ -63,7 +51,7 @@ static GPBFileDescriptor *CloudSpeechRoot_FileDescriptor(void) {
   // about thread safety of the singleton.
   static GPBFileDescriptor *descriptor = NULL;
   if (!descriptor) {
-    GPBDebugCheckRuntimeVersion();
+    GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
     descriptor = [[GPBFileDescriptor alloc] initWithPackage:@"google.cloud.speech.v1"
                                                      syntax:GPBFileSyntaxProto3];
   }
@@ -115,7 +103,7 @@ typedef struct RecognizeRequest__storage_ {
                                         fields:fields
                                     fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
                                    storageSize:sizeof(RecognizeRequest__storage_)
-                                         flags:0];
+                                         flags:GPBDescriptorInitializationFlag_None];
     NSAssert(descriptor == nil, @"Startup recursed!");
     descriptor = localDescriptor;
   }
@@ -169,7 +157,7 @@ typedef struct LongRunningRecognizeRequest__storage_ {
                                         fields:fields
                                     fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
                                    storageSize:sizeof(LongRunningRecognizeRequest__storage_)
-                                         flags:0];
+                                         flags:GPBDescriptorInitializationFlag_None];
     NSAssert(descriptor == nil, @"Startup recursed!");
     descriptor = localDescriptor;
   }
@@ -224,7 +212,7 @@ typedef struct StreamingRecognizeRequest__storage_ {
                                         fields:fields
                                     fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
                                    storageSize:sizeof(StreamingRecognizeRequest__storage_)
-                                         flags:0];
+                                         flags:GPBDescriptorInitializationFlag_None];
     static const char *oneofs[] = {
       "streamingRequest",
     };
@@ -298,7 +286,7 @@ typedef struct StreamingRecognitionConfig__storage_ {
                                         fields:fields
                                     fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
                                    storageSize:sizeof(StreamingRecognitionConfig__storage_)
-                                         flags:0];
+                                         flags:GPBDescriptorInitializationFlag_None];
     NSAssert(descriptor == nil, @"Startup recursed!");
     descriptor = localDescriptor;
   }
@@ -340,7 +328,7 @@ typedef struct RecognitionConfig__storage_ {
         .number = RecognitionConfig_FieldNumber_Encoding,
         .hasIndex = 0,
         .offset = (uint32_t)offsetof(RecognitionConfig__storage_, encoding),
-        .flags = GPBFieldOptional | GPBFieldHasEnumDescriptor,
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldHasEnumDescriptor),
         .dataType = GPBDataTypeEnum,
       },
       {
@@ -405,7 +393,7 @@ typedef struct RecognitionConfig__storage_ {
                                         fields:fields
                                     fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
                                    storageSize:sizeof(RecognitionConfig__storage_)
-                                         flags:0];
+                                         flags:GPBDescriptorInitializationFlag_None];
     NSAssert(descriptor == nil, @"Startup recursed!");
     descriptor = localDescriptor;
   }
@@ -429,7 +417,7 @@ void SetRecognitionConfig_Encoding_RawValue(RecognitionConfig *message, int32_t 
 #pragma mark - Enum RecognitionConfig_AudioEncoding
 
 GPBEnumDescriptor *RecognitionConfig_AudioEncoding_EnumDescriptor(void) {
-  static GPBEnumDescriptor *descriptor = NULL;
+  static _Atomic(GPBEnumDescriptor*) descriptor = nil;
   if (!descriptor) {
     static const char *valueNames =
         "EncodingUnspecified\000Linear16\000Flac\000Mulaw\000"
@@ -450,7 +438,8 @@ GPBEnumDescriptor *RecognitionConfig_AudioEncoding_EnumDescriptor(void) {
                                            values:values
                                             count:(uint32_t)(sizeof(values) / sizeof(int32_t))
                                      enumVerifier:RecognitionConfig_AudioEncoding_IsValidValue];
-    if (!OSAtomicCompareAndSwapPtrBarrier(nil, worker, (void * volatile *)&descriptor)) {
+    GPBEnumDescriptor *expected = nil;
+    if (!atomic_compare_exchange_strong(&descriptor, &expected, worker)) {
       [worker release];
     }
   }
@@ -507,7 +496,7 @@ typedef struct SpeechContext__storage_ {
                                         fields:fields
                                     fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
                                    storageSize:sizeof(SpeechContext__storage_)
-                                         flags:0];
+                                         flags:GPBDescriptorInitializationFlag_None];
     NSAssert(descriptor == nil, @"Startup recursed!");
     descriptor = localDescriptor;
   }
@@ -562,7 +551,7 @@ typedef struct RecognitionAudio__storage_ {
                                         fields:fields
                                     fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
                                    storageSize:sizeof(RecognitionAudio__storage_)
-                                         flags:0];
+                                         flags:GPBDescriptorInitializationFlag_None];
     static const char *oneofs[] = {
       "audioSource",
     };
@@ -616,7 +605,7 @@ typedef struct RecognizeResponse__storage_ {
                                         fields:fields
                                     fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
                                    storageSize:sizeof(RecognizeResponse__storage_)
-                                         flags:0];
+                                         flags:GPBDescriptorInitializationFlag_None];
     NSAssert(descriptor == nil, @"Startup recursed!");
     descriptor = localDescriptor;
   }
@@ -659,7 +648,7 @@ typedef struct LongRunningRecognizeResponse__storage_ {
                                         fields:fields
                                     fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
                                    storageSize:sizeof(LongRunningRecognizeResponse__storage_)
-                                         flags:0];
+                                         flags:GPBDescriptorInitializationFlag_None];
     NSAssert(descriptor == nil, @"Startup recursed!");
     descriptor = localDescriptor;
   }
@@ -724,7 +713,7 @@ typedef struct LongRunningRecognizeMetadata__storage_ {
                                         fields:fields
                                     fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
                                    storageSize:sizeof(LongRunningRecognizeMetadata__storage_)
-                                         flags:0];
+                                         flags:GPBDescriptorInitializationFlag_None];
     NSAssert(descriptor == nil, @"Startup recursed!");
     descriptor = localDescriptor;
   }
@@ -778,7 +767,7 @@ typedef struct StreamingRecognizeResponse__storage_ {
         .number = StreamingRecognizeResponse_FieldNumber_SpeechEventType,
         .hasIndex = 1,
         .offset = (uint32_t)offsetof(StreamingRecognizeResponse__storage_, speechEventType),
-        .flags = GPBFieldOptional | GPBFieldHasEnumDescriptor,
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldHasEnumDescriptor),
         .dataType = GPBDataTypeEnum,
       },
     };
@@ -789,7 +778,7 @@ typedef struct StreamingRecognizeResponse__storage_ {
                                         fields:fields
                                     fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
                                    storageSize:sizeof(StreamingRecognizeResponse__storage_)
-                                         flags:0];
+                                         flags:GPBDescriptorInitializationFlag_None];
     NSAssert(descriptor == nil, @"Startup recursed!");
     descriptor = localDescriptor;
   }
@@ -813,7 +802,7 @@ void SetStreamingRecognizeResponse_SpeechEventType_RawValue(StreamingRecognizeRe
 #pragma mark - Enum StreamingRecognizeResponse_SpeechEventType
 
 GPBEnumDescriptor *StreamingRecognizeResponse_SpeechEventType_EnumDescriptor(void) {
-  static GPBEnumDescriptor *descriptor = NULL;
+  static _Atomic(GPBEnumDescriptor*) descriptor = nil;
   if (!descriptor) {
     static const char *valueNames =
         "SpeechEventUnspecified\000EndOfSingleUttera"
@@ -828,7 +817,8 @@ GPBEnumDescriptor *StreamingRecognizeResponse_SpeechEventType_EnumDescriptor(voi
                                            values:values
                                             count:(uint32_t)(sizeof(values) / sizeof(int32_t))
                                      enumVerifier:StreamingRecognizeResponse_SpeechEventType_IsValidValue];
-    if (!OSAtomicCompareAndSwapPtrBarrier(nil, worker, (void * volatile *)&descriptor)) {
+    GPBEnumDescriptor *expected = nil;
+    if (!atomic_compare_exchange_strong(&descriptor, &expected, worker)) {
       [worker release];
     }
   }
@@ -900,7 +890,7 @@ typedef struct StreamingRecognitionResult__storage_ {
                                         fields:fields
                                     fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
                                    storageSize:sizeof(StreamingRecognitionResult__storage_)
-                                         flags:0];
+                                         flags:GPBDescriptorInitializationFlag_None];
     NSAssert(descriptor == nil, @"Startup recursed!");
     descriptor = localDescriptor;
   }
@@ -943,7 +933,7 @@ typedef struct SpeechRecognitionResult__storage_ {
                                         fields:fields
                                     fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
                                    storageSize:sizeof(SpeechRecognitionResult__storage_)
-                                         flags:0];
+                                         flags:GPBDescriptorInitializationFlag_None];
     NSAssert(descriptor == nil, @"Startup recursed!");
     descriptor = localDescriptor;
   }
@@ -1008,7 +998,7 @@ typedef struct SpeechRecognitionAlternative__storage_ {
                                         fields:fields
                                     fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
                                    storageSize:sizeof(SpeechRecognitionAlternative__storage_)
-                                         flags:0];
+                                         flags:GPBDescriptorInitializationFlag_None];
     NSAssert(descriptor == nil, @"Startup recursed!");
     descriptor = localDescriptor;
   }
@@ -1073,7 +1063,7 @@ typedef struct WordInfo__storage_ {
                                         fields:fields
                                     fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
                                    storageSize:sizeof(WordInfo__storage_)
-                                         flags:0];
+                                         flags:GPBDescriptorInitializationFlag_None];
     NSAssert(descriptor == nil, @"Startup recursed!");
     descriptor = localDescriptor;
   }

@@ -106,6 +106,14 @@ public class RNGoogleSpeechApiModule extends ReactContextBaseJavaModule {
     }
   }
 
+  @ReactMethod
+  private void urgentCancelSpeech() {
+    if (!mStop) {
+      mStop = true;
+      mediaRecorder.stop();
+    }
+  }
+
   private Runnable pollTask = new Runnable() {
       @Override
       public void run() {
@@ -136,7 +144,6 @@ public class RNGoogleSpeechApiModule extends ReactContextBaseJavaModule {
                    conn.setRequestProperty("Content-Type", "application/json");
                    conn.setDoOutput(true);
                    conn.setDoInput(true);
-
 
                    JSONObject jsonConfig = new JSONObject();
                    jsonConfig.put("encoding", "AMR");

@@ -1,13 +1,30 @@
+#if !defined(GPB_GRPC_PROTOCOL_ONLY) || !GPB_GRPC_PROTOCOL_ONLY
 #import "google/longrunning/Operations.pbrpc.h"
-
+#import "google/longrunning/Operations.pbobjc.h"
 #import <ProtoRPC/ProtoRPC.h>
 #import <RxLibrary/GRXWriter+Immediate.h>
+
+#import "google/api/Annotations.pbobjc.h"
+#if defined(GPB_USE_PROTOBUF_FRAMEWORK_IMPORTS) && GPB_USE_PROTOBUF_FRAMEWORK_IMPORTS
+#import <Protobuf/Any.pbobjc.h>
+#else
+#import "google/protobuf/Any.pbobjc.h"
+#endif
+#if defined(GPB_USE_PROTOBUF_FRAMEWORK_IMPORTS) && GPB_USE_PROTOBUF_FRAMEWORK_IMPORTS
+#import <Protobuf/Empty.pbobjc.h>
+#else
+#import "google/protobuf/Empty.pbobjc.h"
+#endif
+#import "google/rpc/Status.pbobjc.h"
 
 @implementation Operations
 
 // Designated initializer
 - (instancetype)initWithHost:(NSString *)host {
-  return (self = [super initWithHost:host packageName:@"google.longrunning" serviceName:@"Operations"]);
+  self = [super initWithHost:host
+                 packageName:@"google.longrunning"
+                 serviceName:@"Operations"];
+  return self;
 }
 
 // Override superclass initializer to disallow different package and service names.
@@ -17,10 +34,13 @@
   return [self initWithHost:host];
 }
 
+#pragma mark - Class Methods
+
 + (instancetype)serviceWithHost:(NSString *)host {
   return [[self alloc] initWithHost:host];
 }
 
+#pragma mark - Method Implementations
 
 #pragma mark GetOperation(GetOperationRequest) returns (Operation)
 
@@ -115,3 +135,4 @@
         responsesWriteable:[GRXWriteable writeableWithSingleHandler:handler]];
 }
 @end
+#endif

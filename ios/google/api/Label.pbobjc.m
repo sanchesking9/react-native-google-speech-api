@@ -13,7 +13,9 @@
  #import "GPBProtocolBuffers_RuntimeSupport.h"
 #endif
 
- #import "google/api/Label.pbobjc.h"
+#import <stdatomic.h>
+
+#import "google/api/Label.pbobjc.h"
 // @@protoc_insertion_point(imports)
 
 #pragma clang diagnostic push
@@ -22,6 +24,9 @@
 #pragma mark - LabelRoot
 
 @implementation LabelRoot
+
+// No extensions in the file and no imports, so no need to generate
+// +extensionRegistry.
 
 @end
 
@@ -32,7 +37,7 @@ static GPBFileDescriptor *LabelRoot_FileDescriptor(void) {
   // about thread safety of the singleton.
   static GPBFileDescriptor *descriptor = NULL;
   if (!descriptor) {
-    GPBDebugCheckRuntimeVersion();
+    GPB_DEBUG_CHECK_RUNTIME_VERSIONS();
     descriptor = [[GPBFileDescriptor alloc] initWithPackage:@"google.api"
                                                      syntax:GPBFileSyntaxProto3];
   }
@@ -75,7 +80,7 @@ typedef struct LabelDescriptor__storage_ {
         .number = LabelDescriptor_FieldNumber_ValueType,
         .hasIndex = 1,
         .offset = (uint32_t)offsetof(LabelDescriptor__storage_, valueType),
-        .flags = GPBFieldOptional | GPBFieldHasEnumDescriptor,
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldHasEnumDescriptor),
         .dataType = GPBDataTypeEnum,
       },
       {
@@ -95,7 +100,7 @@ typedef struct LabelDescriptor__storage_ {
                                         fields:fields
                                     fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
                                    storageSize:sizeof(LabelDescriptor__storage_)
-                                         flags:0];
+                                         flags:GPBDescriptorInitializationFlag_None];
     NSAssert(descriptor == nil, @"Startup recursed!");
     descriptor = localDescriptor;
   }
@@ -119,7 +124,7 @@ void SetLabelDescriptor_ValueType_RawValue(LabelDescriptor *message, int32_t val
 #pragma mark - Enum LabelDescriptor_ValueType
 
 GPBEnumDescriptor *LabelDescriptor_ValueType_EnumDescriptor(void) {
-  static GPBEnumDescriptor *descriptor = NULL;
+  static _Atomic(GPBEnumDescriptor*) descriptor = nil;
   if (!descriptor) {
     static const char *valueNames =
         "String\000Bool\000Int64\000";
@@ -134,7 +139,8 @@ GPBEnumDescriptor *LabelDescriptor_ValueType_EnumDescriptor(void) {
                                            values:values
                                             count:(uint32_t)(sizeof(values) / sizeof(int32_t))
                                      enumVerifier:LabelDescriptor_ValueType_IsValidValue];
-    if (!OSAtomicCompareAndSwapPtrBarrier(nil, worker, (void * volatile *)&descriptor)) {
+    GPBEnumDescriptor *expected = nil;
+    if (!atomic_compare_exchange_strong(&descriptor, &expected, worker)) {
       [worker release];
     }
   }

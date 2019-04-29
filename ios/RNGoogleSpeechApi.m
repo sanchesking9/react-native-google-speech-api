@@ -106,4 +106,8 @@ RCT_EXPORT_METHOD(cancelSpeech:(RCTResponseSenderBlock)callback) {
     [_audioSession setCategory:AVAudioSessionCategoryPlayback error:nil];
 }
 
+RCT_EXPORT_METHOD(urgentCancelSpeech) {
+    [self stopAudio];
+}
+
 @end
