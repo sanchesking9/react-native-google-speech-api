@@ -1,10 +1,12 @@
 'use strict';
 import React, {
   NativeModules,
-  Platform
+  Platform,
+  NativeEventEmitter
 } from 'react-native';
 
 const { RNGoogleSpeechApi } = NativeModules;
+const eventEmitter = new NativeEventEmitter(RNGoogleSpeechApi);
 
 class RCTGoogleSpeechApi {
 
@@ -36,6 +38,14 @@ class RCTGoogleSpeechApi {
         });
       });
     }
+  }
+
+  addGoogleSpeechApiEventListener(listener) {
+    eventEmitter.addListener('onSpeechToTextCustom', listener);
+  }
+
+  removeGoogleSpeechApiEventListener() {
+    eventEmitter.removeAllListeners('onSpeechToTextCustom');
   }
 
   urgentStop() {

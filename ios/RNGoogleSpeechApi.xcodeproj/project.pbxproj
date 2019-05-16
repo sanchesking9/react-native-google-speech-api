@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		87D58A602289A44200290A80 /* SpeechRecognitionService.m in Sources */ = {isa = PBXBuildFile; fileRef = 87D58A5C2289A44100290A80 /* SpeechRecognitionService.m */; };
+		87D58A612289A44200290A80 /* AudioController.m in Sources */ = {isa = PBXBuildFile; fileRef = 87D58A5F2289A44100290A80 /* AudioController.m */; };
 		B3E7B58A1CC2AC0600A0062D /* RNGoogleSpeechApi.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E7B5891CC2AC0600A0062D /* RNGoogleSpeechApi.m */; };
 /* End PBXBuildFile section */
 
@@ -24,6 +26,10 @@
 
 /* Begin PBXFileReference section */
 		134814201AA4EA6300B7C361 /* libRNGoogleSpeechApi.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRNGoogleSpeechApi.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		87D58A5C2289A44100290A80 /* SpeechRecognitionService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SpeechRecognitionService.m; sourceTree = "<group>"; };
+		87D58A5D2289A44100290A80 /* SpeechRecognitionService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpeechRecognitionService.h; sourceTree = "<group>"; };
+		87D58A5E2289A44100290A80 /* AudioController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioController.h; sourceTree = "<group>"; };
+		87D58A5F2289A44100290A80 /* AudioController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AudioController.m; sourceTree = "<group>"; };
 		B3E7B5881CC2AC0600A0062D /* RNGoogleSpeechApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNGoogleSpeechApi.h; sourceTree = "<group>"; };
 		B3E7B5891CC2AC0600A0062D /* RNGoogleSpeechApi.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNGoogleSpeechApi.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -50,6 +56,10 @@
 		58B511D21A9E6C8500147676 = {
 			isa = PBXGroup;
 			children = (
+				87D58A5E2289A44100290A80 /* AudioController.h */,
+				87D58A5F2289A44100290A80 /* AudioController.m */,
+				87D58A5D2289A44100290A80 /* SpeechRecognitionService.h */,
+				87D58A5C2289A44100290A80 /* SpeechRecognitionService.m */,
 				B3E7B5881CC2AC0600A0062D /* RNGoogleSpeechApi.h */,
 				B3E7B5891CC2AC0600A0062D /* RNGoogleSpeechApi.m */,
 				134814211AA4EA7D00B7C361 /* Products */,
@@ -95,6 +105,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 			);
 			mainGroup = 58B511D21A9E6C8500147676;
@@ -112,7 +123,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				87D58A612289A44200290A80 /* AudioController.m in Sources */,
 				B3E7B58A1CC2AC0600A0062D /* RNGoogleSpeechApi.m in Sources */,
+				87D58A602289A44200290A80 /* SpeechRecognitionService.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
