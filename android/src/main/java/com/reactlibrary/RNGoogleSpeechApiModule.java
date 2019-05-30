@@ -23,6 +23,7 @@ public class RNGoogleSpeechApiModule extends ReactContextBaseJavaModule {
 
   private final ReactApplicationContext reactContext;
   private String apiKey;
+  private boolean isStop = false;
 //  private MediaRecorder mediaRecorder;
 //  private String fileName = Environment.getExternalStorageDirectory() + "/record.3gp";
 //  private Handler handler = new Handler(Looper.getMainLooper());
@@ -69,12 +70,21 @@ public class RNGoogleSpeechApiModule extends ReactContextBaseJavaModule {
     }
   }
 
+  @ReactMethod
+  private void cancelSpeech() {
+    stopVoiceRecorder();
+  }
+
   private final VoiceRecorder.Callback mVoiceCallback = new VoiceRecorder.Callback() {
 
     @Override
     public void onVoiceStart() {
       if (mSpeechService != null) {
-        mSpeechService.startRecognizing(mVoiceRecorder.getSampleRate());
+        try {
+          mSpeechService.startRecognizing(mVoiceRecorder.getSampleRate());
+        } catch (Exception e) {
+          mSpeechService.startRecognizing(16000);
+        }
       }
     }
 
@@ -98,12 +108,14 @@ public class RNGoogleSpeechApiModule extends ReactContextBaseJavaModule {
     if (mVoiceRecorder != null) {
       mVoiceRecorder.stop();
     }
+    isStop = false;
     mVoiceRecorder = new VoiceRecorder(mVoiceCallback);
     mVoiceRecorder.start();
   }
 
   private void stopVoiceRecorder() {
     if (mVoiceRecorder != null) {
+      isStop = true;
       mVoiceRecorder.stop();
       mVoiceRecorder = null;
     }
@@ -113,16 +125,24 @@ public class RNGoogleSpeechApiModule extends ReactContextBaseJavaModule {
           new SpeechService.Listener() {
             @Override
             public void onSpeechRecognized(final String text, final boolean isFinal) {
-              if (!TextUtils.isEmpty(text)) {
+              if(!isStop) {
                 WritableMap params = Arguments.createMap();
-                params.putBoolean("isFinal", isFinal);
-                params.putString("text", text);
-                sendEvent(reactContext, "onSpeechToTextCustom", params);
-              }
 
-              if (isFinal) {
-                mVoiceRecorder.dismiss();
-                stopVoiceRecorder();
+                if (!TextUtils.isEmpty(text)) {
+                  params.putString("text", text);
+                } else {
+                  params.putString("text", "");
+                }
+
+                params.putBoolean("isFinal", isFinal);
+                sendEvent(reactContext, "onSpeechToTextCustom", params);
+
+                if (isFinal) {
+                  if (mVoiceRecorder != null) {
+                    mVoiceRecorder.dismiss();
+                    stopVoiceRecorder();
+                  }
+                }
               }
             }
           };

@@ -22,11 +22,12 @@
     "gitCommittish": null
   },
   "_requiredBy": [
+    "#USER",
     "/"
   ],
-  "_resolved": "git+https://github.com/frantsyan/react-native-google-speech-api.git#9ac6d5caafc60ac719fd30b95cedbd21b6295789",
+  "_resolved": "git+https://github.com/frantsyan/react-native-google-speech-api.git#6960179c47f423a6ce9b95afa14f9dc59426dd3d",
   "_spec": "react-native-google-speech-api@git+https://github.com/frantsyan/react-native-google-speech-api.git",
-  "_where": "/Users/vladyslav/Documents/Work/PerceptionBox/get-alert",
+  "_where": "/Users/vladyslav/Documents/Work/PerceptionBox/TestProject",
   "author": "",
   "bugs": {
     "url": "https://github.com/hayanmind/react-native-google-speech-api/issues"

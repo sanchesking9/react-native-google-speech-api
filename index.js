@@ -19,25 +19,7 @@ class RCTGoogleSpeechApi {
   }
 
   stop() {
-    if(Platform.OS === 'ios') {
-      return new Promise((resolve, reject) => {
-        RNGoogleSpeechApi.cancelSpeech((error, data) => {
-          if (error) {
-            reject(new Error(error));
-          } else {
-            resolve(data);
-          }
-        });
-      });
-    } else {
-      return new Promise((resolve, reject) => {
-        RNGoogleSpeechApi.cancelSpeech(data => {
-          resolve(data);
-        }, error => {
-          reject(new Error(error));
-        });
-      });
-    }
+    RNGoogleSpeechApi.cancelSpeech();
   }
 
   addGoogleSpeechApiEventListener(listener) {
