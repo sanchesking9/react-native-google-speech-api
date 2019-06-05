@@ -8,6 +8,7 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -42,8 +43,7 @@ public class RNGoogleSpeechApiModule extends ReactContextBaseJavaModule {
     @Override
     public void onServiceConnected(ComponentName componentName, IBinder binder) {
       mSpeechService = SpeechService.from(binder);
-      mSpeechService.addApi(apiKey);
-      mSpeechService.addListener(mSpeechServiceListener);
+      mSpeechService.addListener(mSpeechServiceListener, apiKey);
     }
 
     @Override
@@ -150,8 +150,8 @@ public class RNGoogleSpeechApiModule extends ReactContextBaseJavaModule {
   @ReactMethod
   public void setApiKey(String apiKey) {
     this.apiKey = apiKey;
-    reactContext.bindService(new Intent(reactContext, SpeechService.class),
-            mServiceConnection, Context.BIND_AUTO_CREATE);
+    Intent serviceIntent = new Intent(reactContext, SpeechService.class);
+    reactContext.bindService(serviceIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
   }
 
 //  @ReactMethod

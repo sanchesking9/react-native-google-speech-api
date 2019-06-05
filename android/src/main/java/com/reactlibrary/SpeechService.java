@@ -11,6 +11,7 @@ import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.os.Bundle;
 
 import com.google.auth.Credentials;
 import com.google.auth.oauth2.AccessToken;
@@ -86,7 +87,7 @@ public class SpeechService extends Service {
     private volatile AccessTokenTask mAccessTokenTask;
     private SpeechGrpc.SpeechStub mApi;
     private static Handler mHandler;
-    private String api;
+    private static String api;
 
     private final StreamObserver<StreamingRecognizeResponse> mResponseObserver
             = new StreamObserver<StreamingRecognizeResponse>() {
@@ -130,8 +131,6 @@ public class SpeechService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        mHandler = new Handler();
-        fetchAccessToken();
     }
 
     @Override
@@ -167,12 +166,11 @@ public class SpeechService extends Service {
         return mBinder;
     }
 
-    public void addListener(@NonNull Listener listener) {
-        mListeners.add(listener);
-    }
-
-    public void addApi(@NonNull String api) {
+    public void addListener(@NonNull Listener listener, @NonNull String api) {
         this.api = api;
+        mHandler = new Handler();
+        fetchAccessToken();
+        mListeners.add(listener);
     }
 
     public void removeListener(@NonNull Listener listener) {
@@ -247,10 +245,10 @@ public class SpeechService extends Service {
         }
     };
 
-    private class AccessTokenTask extends AsyncTask<Void, Void, AccessToken> {
+    private class AccessTokenTask extends AsyncTask<String, Void, AccessToken> {
 
         @Override
-        protected AccessToken doInBackground(Void... voids) {
+        protected AccessToken doInBackground(String... strings) {
             final SharedPreferences prefs =
                     getSharedPreferences(PREFS, Context.MODE_PRIVATE);
             String tokenValue = prefs.getString(PREF_ACCESS_TOKEN_VALUE, null);
