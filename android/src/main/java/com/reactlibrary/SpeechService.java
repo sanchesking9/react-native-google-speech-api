@@ -213,10 +213,13 @@ public class SpeechService extends Service {
         if (mRequestObserver == null) {
             return;
         }
-        // Call the streaming recognition API
-        mRequestObserver.onNext(StreamingRecognizeRequest.newBuilder()
-                .setAudioContent(ByteString.copyFrom(data, 0, size))
-                .build());
+
+        try {
+            // Call the streaming recognition API
+            mRequestObserver.onNext(StreamingRecognizeRequest.newBuilder()
+                    .setAudioContent(ByteString.copyFrom(data, 0, size))
+                    .build());
+        } catch (Exception e) {}
     }
 
     /**
