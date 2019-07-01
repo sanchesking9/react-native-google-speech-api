@@ -30,10 +30,6 @@ class RCTGoogleSpeechApi {
     eventEmitter.removeAllListeners('onSpeechToTextCustom');
   }
 
-  urgentStop() {
-    RNGoogleSpeechApi.urgentCancelSpeech();
-  }
-
 }
 
 module.exports = new RCTGoogleSpeechApi();

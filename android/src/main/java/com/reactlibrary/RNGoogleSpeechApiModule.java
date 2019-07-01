@@ -59,18 +59,6 @@ public class RNGoogleSpeechApiModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  private void urgentCancelSpeech() {
-    stopVoiceRecorder();
-
-    if(mSpeechService != null) {
-      // Stop Cloud Speech API
-      mSpeechService.removeListener(mSpeechServiceListener);
-      reactContext.unbindService(mServiceConnection);
-      mSpeechService = null;
-    }
-  }
-
-  @ReactMethod
   private void cancelSpeech() {
     stopVoiceRecorder();
   }
@@ -191,14 +179,6 @@ public class RNGoogleSpeechApiModule extends ReactContextBaseJavaModule {
 //      } catch (IOException e) {
 //        error.invoke(String.valueOf(e));
 //      }
-//    }
-//  }
-
-//  @ReactMethod
-//  private void urgentCancelSpeech() {
-//    if (!mStop) {
-//      mStop = true;
-//      mediaRecorder.stop();
 //    }
 //  }
 
