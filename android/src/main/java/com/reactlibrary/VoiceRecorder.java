@@ -93,19 +93,17 @@ public class VoiceRecorder {
      * Stops recording audio.
      */
     public void stop() {
-        synchronized (mLock) {
-            dismiss();
-            if (mThread != null) {
-                mThread.interrupt();
-                mThread = null;
-            }
-            if (mAudioRecord != null) {
-                mAudioRecord.stop();
-                mAudioRecord.release();
-                mAudioRecord = null;
-            }
-            mBuffer = null;
+        dismiss();
+        if (mThread != null) {
+            mThread.interrupt();
+            mThread = null;
         }
+        if (mAudioRecord != null) {
+            mAudioRecord.stop();
+            mAudioRecord.release();
+            mAudioRecord = null;
+        }
+        mBuffer = null;
     }
 
     /**
