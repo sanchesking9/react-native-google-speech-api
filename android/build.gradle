@@ -1,19 +1,19 @@
 
 buildscript {
     repositories {
-        jcenter()
+        mavenCentral()
         maven { url 'https://maven.google.com' }
     }
 
     dependencies {
         classpath 'com.android.tools.build:gradle:3.4.0'
-        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.18'
+        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.19'
     }
 }
 
 allprojects {
     repositories {
-        jcenter()
+        mavenCentral()
         maven { url 'https://maven.google.com' }
     }
 }
@@ -22,46 +22,62 @@ apply plugin: 'com.android.library'
 apply plugin: 'com.google.protobuf'
 
 ext {
-    grpcVersion = '1.4.0'
+    grpcVersion = '1.50.2'
+    protoVersion = '3.4.0'
 }
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 33
 
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 28
+        targetSdkVersion 33
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
     }
+//     sourceSets {
+//         main {
+//             proto {
+//             }
+//         }
+//     }
     lintOptions {
         abortOnError false
     }
     configurations.all {
         resolutionStrategy.force 'com.google.code.findbugs:jsr305:3.0.2'
     }
+    packagingOptions {
+        exclude('**/*.proto')
+    }
 }
 
 protobuf {
     protoc {
-        artifact = 'com.google.protobuf:protoc:3.3.0'
+        artifact = "com.google.protobuf:protoc:${protoVersion}:osx-x86_64"
     }
     plugins {
-        javalite {
-            artifact = "com.google.protobuf:protoc-gen-javalite:3.0.0"
-        }
         grpc {
-            artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}"
+            artifact = "io.grpc:protoc-gen-grpc-java:${grpcVersion}:osx-x86_64"
+        }
+        javalite {
+            artifact = "com.google.protobuf:protoc-gen-javalite:3.0.0:osx-x86_64"
         }
     }
     generateProtoTasks {
         all().each { task ->
+            task.builtins {
+                // In most cases you don't need the full Java output
+                // if you use the lite output.
+                remove java
+            }
             task.plugins {
                 javalite {}
                 grpc {
                     // Options added to --grpc_out
-                    option 'lite'
+                    outputSubDir = 'java'
+                    option 'lite' // Needed this line
                 }
             }
         }
@@ -80,16 +96,20 @@ dependencies {
 //    compile 'com.google.code.findbugs:jsr305:2.0.1'
 //    compile 'commons-io:commons-io:2.5'
 
+
+    implementation "com.google.protobuf:protobuf-java:${protoVersion}"
     // gRPC
     implementation "io.grpc:grpc-okhttp:$grpcVersion"
-    implementation "io.grpc:grpc-protobuf-lite:$grpcVersion"
+    implementation ("io.grpc:grpc-protobuf-lite:$grpcVersion") {
+        // Exclude will not be necessary starting in grpc 1.26
+        exclude group: 'com.google.protobuf'
+    }
     implementation "io.grpc:grpc-stub:$grpcVersion"
-    implementation 'javax.annotation:javax.annotation-api:1.2'
-    protobuf 'com.google.protobuf:protobuf-java:3.3.1'
+    implementation 'javax.annotation:javax.annotation-api:1.3.2'
     // OAuth2 for Google API
     implementation('com.google.auth:google-auth-library-oauth2-http:0.18.0') {
         exclude module: 'httpclient'
     }
-    implementation 'com.android.support:multidex:1.0.0'
+    implementation 'com.android.support:multidex:1.0.3'
 }
   
