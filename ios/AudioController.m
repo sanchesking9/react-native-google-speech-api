@@ -26,10 +26,13 @@
 
 @implementation AudioController
 
+static AudioController *instance = nil;
 + (instancetype) sharedInstance {
-  static AudioController *instance = nil;
   if (!instance) {
     instance = [[self alloc] init];
+      NSLog(@"What is your name?");
+  } else {
+      NSLog(@"What is your name? no");
   }
   return instance;
 }
@@ -185,6 +188,8 @@ static OSStatus playbackCallback(void *inRefCon,
                                 &oneFlag,
                                 sizeof(oneFlag));
   if (CheckError(status, "Couldn't enable RemoteIO input")) {
+      
+
     return status;
   }
 
@@ -265,6 +270,7 @@ static OSStatus playbackCallback(void *inRefCon,
 }
 
 - (OSStatus) stop {
+  instance = nil;
   return AudioOutputUnitStop(self->remoteIOUnit);
 }
 
