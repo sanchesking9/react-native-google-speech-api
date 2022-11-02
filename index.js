@@ -14,6 +14,10 @@ class RCTGoogleSpeechApi {
     RNGoogleSpeechApi.setApiKey(apiKey);
   }
 
+  setLanguage(language) {
+    RNGoogleSpeechApi.setLanguage(language);
+  }
+
   start() {
     RNGoogleSpeechApi.startSpeech();
   }
