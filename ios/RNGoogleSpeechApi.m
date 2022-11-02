@@ -15,6 +15,7 @@
 @property (strong, nonatomic) AVAudioRecorder *audioRecorder;
 @property (strong, nonatomic) AVAudioSession *audioSession;
 @property (strong, nonatomic) NSString *apiKey;
+@property (strong, nonatomic) NSString *language;
 @property (nonatomic, strong) NSMutableData *audioData;
 
 @end
@@ -38,6 +39,10 @@ RCT_EXPORT_METHOD(setApiKey:(NSString *)apiKey) {
     _apiKey = apiKey;
 }
 
+RCT_EXPORT_METHOD(setLanguage:(NSString *)language) {
+    _language = language;
+}
+
 RCT_EXPORT_METHOD(startSpeech) {
 //    _audioSession = [AVAudioSession sharedInstance];
 //    [_audioSession setCategory:AVAudioSessionCategoryPlayAndRecord error:nil];
@@ -50,6 +55,7 @@ RCT_EXPORT_METHOD(startSpeech) {
     [[AudioController sharedInstance] prepareWithSampleRate:SAMPLE_RATE];
     [[SpeechRecognitionService sharedInstance] setSampleRate:SAMPLE_RATE];
     [[SpeechRecognitionService sharedInstance] setApiKey:_apiKey];
+    [[SpeechRecognitionService sharedInstance] setLanguage:_language];
     [[AudioController sharedInstance] start];
 }
 
