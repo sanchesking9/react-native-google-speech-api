@@ -6,7 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -24,6 +24,7 @@ public class RNGoogleSpeechApiModule extends ReactContextBaseJavaModule {
 
   private final ReactApplicationContext reactContext;
   private String apiKey;
+  private String language;
   private boolean isStop = false;
 //  private MediaRecorder mediaRecorder;
 //  private String fileName = Environment.getExternalStorageDirectory() + "/record.3gp";
@@ -43,7 +44,7 @@ public class RNGoogleSpeechApiModule extends ReactContextBaseJavaModule {
     @Override
     public void onServiceConnected(ComponentName componentName, IBinder binder) {
       mSpeechService = SpeechService.from(binder);
-      mSpeechService.addListener(mSpeechServiceListener, apiKey);
+      mSpeechService.addListener(mSpeechServiceListener, apiKey, language);
     }
 
     @Override
@@ -138,128 +139,20 @@ public class RNGoogleSpeechApiModule extends ReactContextBaseJavaModule {
   @ReactMethod
   public void setApiKey(String apiKey) {
     this.apiKey = apiKey;
+    if (mSpeechService != null) {
+      reactContext.unbindService(mServiceConnection);
+    }
     Intent serviceIntent = new Intent(reactContext, SpeechService.class);
     reactContext.bindService(serviceIntent, mServiceConnection, Context.BIND_AUTO_CREATE);
   }
-
-//  @ReactMethod
-//  public void startSpeech() {
-//    try {
-//        mediaRecorder = new MediaRecorder();
-//        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-//        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-//        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-//        mediaRecorder.setOutputFile(fileName);
-//        mediaRecorder.prepare();
-//        mediaRecorder.start();
-//        mStop = false;
-//        handler.postDelayed(pollTask, 10);
-//    } catch (IOException e) {
-//        e.printStackTrace();
-//    }
-//  }
-
-//  @ReactMethod
-//  private void cancelSpeech(Callback result, Callback error) {
-//    if (!mStop) {
-//      mStop = true;
-//      mediaRecorder.stop();
-//      try {
-//        InputStream stream = reactContext.getContentResolver()
-//                .openInputStream(Uri.fromFile(new File(fileName)));
-//        byte[] audioData = IOUtils.toByteArray(stream);
-//        stream.close();
-//
-//        String base64EncodedData =
-//                Base64.encodeBase64String(audioData);
-//
-//        sendPost(result, error, base64EncodedData);
-//      } catch (FileNotFoundException e) {
-//        error.invoke(String.valueOf(e));
-//      } catch (IOException e) {
-//        error.invoke(String.valueOf(e));
-//      }
-//    }
-//  }
-
-//  private Runnable pollTask = new Runnable() {
-//      @Override
-//      public void run() {
-//          WritableMap params = Arguments.createMap();
-//      	  params.putInt("noiseLevel", getAmplitude() + 4);
-//      	  sendEvent(reactContext, "onSpeechToTextCustom", params);
-//          if(!mStop) {
-//            handler.postDelayed(pollTask, 100);
-//          }
-//      }
-//  };
-
-//  private int getAmplitude() {
-//      if (mediaRecorder != null)
-//          return mediaRecorder.getMaxAmplitude() / 1300;
-//      else
-//          return 0;
-//  }
-
-//  private void sendPost(final Callback result, final Callback error, final String base64EncodedData) {
-//       Thread thread = new Thread(new Runnable() {
-//           @Override
-//           public void run() {
-//               try {
-//                   URL url = new URL("https://speech.googleapis.com/v1/speech:recognize?key=" + apiKey);
-//                   HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-//                   conn.setRequestMethod("POST");
-//                   conn.setRequestProperty("Content-Type", "application/json");
-//                   conn.setDoOutput(true);
-//                   conn.setDoInput(true);
-//
-//                   JSONObject jsonConfig = new JSONObject();
-//                   jsonConfig.put("encoding", "AMR");
-//                   jsonConfig.put("sampleRateHertz", 8000);
-//                   jsonConfig.put("languageCode", "en-US");
-//                   jsonConfig.put("maxAlternatives", 1);
-//
-//                   JSONObject jsonAudio = new JSONObject();
-//                   jsonAudio.put("content", base64EncodedData);
-//
-//                   JSONObject json = new JSONObject();
-//                   json.put("config", jsonConfig);
-//                   json.put("audio", jsonAudio);
-//
-//                   DataOutputStream os = new DataOutputStream(conn.getOutputStream());
-//                   os.writeBytes(json.toString());
-//                   os.flush();
-//                   os.close();
-//
-//
-//                   String reply;
-//                   InputStream in = conn.getInputStream();
-//                   StringBuffer sb = new StringBuffer();
-//                   try {
-//                       int chr;
-//                       while ((chr = in.read()) != -1) {
-//                           sb.append((char) chr);
-//                       }
-//                       reply = sb.toString();
-//                   } finally {
-//                       in.close();
-//                   }
-//
-//                   if(reply.equals("{}")) {
-//                       error.invoke("Error");
-//                   } else {
-//                       result.invoke(reply);
-//                   }
-//
-//                   conn.disconnect();
-//               } catch (Exception e) {
-//                   error.invoke(String.valueOf(e));
-//               }
-//           }
-//       });
-//
-//       thread.start();
-//  }
+  
+  @ReactMethod
+  public void setLanguage(String language) {
+    this.language = language;
+    if (mSpeechService != null) {
+      mSpeechService.setLanguage(language);
+    }
+  }
 
   @Override
   public String getName() {
