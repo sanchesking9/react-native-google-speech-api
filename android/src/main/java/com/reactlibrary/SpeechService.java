@@ -8,8 +8,8 @@ import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import android.util.Log;
 import android.os.Bundle;
 
@@ -88,6 +88,7 @@ public class SpeechService extends Service {
     private SpeechGrpc.SpeechStub mApi;
     private static Handler mHandler;
     private static String api;
+    private static String language;
 
     private final StreamObserver<StreamingRecognizeResponse> mResponseObserver
             = new StreamObserver<StreamingRecognizeResponse>() {
@@ -166,11 +167,16 @@ public class SpeechService extends Service {
         return mBinder;
     }
 
-    public void addListener(@NonNull Listener listener, @NonNull String api) {
+    public void addListener(@NonNull Listener listener, @NonNull String api, @NonNull String language) {
         this.api = api;
+        this.language = language;
         mHandler = new Handler();
         fetchAccessToken();
         mListeners.add(listener);
+    }
+
+    public void setLanguage( @NonNull String language) {
+        this.language = language;
     }
 
     public void removeListener(@NonNull Listener listener) {
@@ -192,7 +198,7 @@ public class SpeechService extends Service {
         mRequestObserver.onNext(StreamingRecognizeRequest.newBuilder()
                 .setStreamingConfig(StreamingRecognitionConfig.newBuilder()
                         .setConfig(RecognitionConfig.newBuilder()
-                                .setLanguageCode("en-US")
+                                .setLanguageCode(language)
                                 .setEncoding(RecognitionConfig.AudioEncoding.LINEAR16)
                                 .setSampleRateHertz(sampleRate)
                                 .build())
