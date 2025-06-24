@@ -23,7 +23,7 @@ Pod::Spec.new do |s|
   s.dependency "!ProtoCompiler-gRPCPlugin", "~> 1.6"
 
   # Pods directory corresponding to this app's Podfile, relative to the location of this podspec.
-  pods_root = './../../ios/Pods'
+  pods_root = File.expand_path('../../ios/Pods', __dir__)
 
   # Path where Cocoapods downloads protoc and the gRPC plugin.
   protoc_dir = "#{pods_root}/!ProtoCompiler"
@@ -32,16 +32,18 @@ Pod::Spec.new do |s|
 
   # Run protoc with the Objective-C and gRPC plugins to generate protocol messages and gRPC clients.
   # You can run this command manually if you later change your protos and need to regenerate.
-  s.prepare_command = <<-CMD
-    cd ios \
-    #{protoc} \
-        --plugin=protoc-gen-grpc=#{plugin} \
-        --objc_out=../ \
-        --grpc_out=../ \
-        -I . \
-        -I #{protoc_dir} \
-        google/*/*.proto google/*/*/*/*.proto
-  CMD
+    s.prepare_command = <<-CMD
+      (
+        cd ios
+        #{protoc} \
+          --plugin=protoc-gen-grpc=#{plugin} \
+          --objc_out=../ \
+          --grpc_out=../ \
+          -I . \
+          -I #{protoc_dir} \
+          google/*/*.proto google/*/*/*/*.proto
+      )
+    CMD
 
     # The --objc_out plugin generates a pair of .pbobjc.h/.pbobjc.m files for each .proto file.
     s.subspec "Messages" do |ms|
